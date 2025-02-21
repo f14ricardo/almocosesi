@@ -194,31 +194,28 @@
 
             fetch(scriptURL, {
                 method: 'POST',
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    funcionario: document.getElementById('funcionario').value,
+                    segunda: document.getElementById('segunda').value,
+                    terca: document.getElementById('terca').value,
+                    quarta: document.getElementById('quarta').value,
+                    quinta: document.getElementById('quinta').value,
+                    sexta: document.getElementById('sexta').value,
+                }),
                 headers: {
                     'Content-Type': 'application/json',
                 },
             })
                 .then(response => response.json())
                 .then(data => {
-                    const alertDiv = document.getElementById('alert');
                     if (data.status === "error") {
-                        alertDiv.textContent = data.message;
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.classList.add('alert-danger');
-                        document.getElementById('formulario').classList.add('disabled');
+                        alert(data.message); // Exibe mensagem de erro
                     } else {
-                        alertDiv.textContent = data.message;
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.classList.add('alert-success');
-                        document.getElementById('formulario').classList.add('disabled');
+                        alert(data.message); // Exibe mensagem de sucesso
                     }
                 })
-                .catch(() => {
-                    const alertDiv = document.getElementById('alert');
-                    alertDiv.textContent = 'Erro ao enviar os dados.';
-                    alertDiv.classList.remove('d-none');
-                    alertDiv.classList.add('alert-danger');
+                .catch(error => {
+                    console.error('Erro ao enviar dados:', error);
                 });
         });
     </script>
