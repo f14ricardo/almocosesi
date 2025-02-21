@@ -171,10 +171,13 @@
                 select.innerHTML = '<option value="" selected>Selecione um funcionário</option>';
                 data.forEach(funcionario => {
                     const option = document.createElement('option');
-                    option.value = funcionario[1]; // Usa o ID como valor
-                    option.textContent = funcionario[0]; // Exibe o nome
+                    option.value = funcionario[1]; // ID
+                    option.textContent = funcionario[0]; // Nome
                     select.appendChild(option);
                 });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar funcionários:', error);
             });
 
         // Envia os dados ao clicar no botão "Enviar"
