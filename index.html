@@ -160,7 +160,7 @@
 
     <!-- Scripts -->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIJDIFSh05g3DpGB9boA3aG0FE_0IGfgD8wNg5YVGFtQ92pR8Au2B-YTTlhVW0jUH6/exec'; // Substitua pela sua URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx8kuVpVQmMzDOO7frGwbfY34dHHz_R1cBgjFULCX8oixy3rIuSfEM9K-GiovqD1QBz/exec'; // Substitua pela sua URL
 
         // Busca os funcionários ao carregar a página
         fetch(scriptURL)
@@ -191,21 +191,25 @@
                 sexta: document.getElementById('sexta').value,
             };
 
-            // Usando o modo 'no-cors'
             fetch(scriptURL, {
                 method: 'POST',
                 body: JSON.stringify(formData),
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'no-cors', // Ativa o modo 'no-cors'
             })
-                .then(() => {
-                    // Não é possível acessar a resposta diretamente
+                .then(response => response.json())
+                .then(data => {
                     const alertDiv = document.getElementById('alert');
-                    alertDiv.textContent = 'Requisição enviada. Verifique a planilha para confirmar.';
-                    alertDiv.classList.remove('d-none');
-                    alertDiv.classList.add('alert-success');
+                    if (data.status === "error") {
+                        alertDiv.textContent = data.message;
+                        alertDiv.classList.remove('d-none');
+                        alertDiv.classList.add('alert-danger');
+                    } else {
+                        alertDiv.textContent = data.message;
+                        alertDiv.classList.remove('d-none');
+                        alertDiv.classList.add('alert-success');
+                    }
                 })
                 .catch(error => {
                     console.error('Erro ao enviar dados:', error);
@@ -215,8 +219,6 @@
                     alertDiv.classList.add('alert-danger');
                 });
         });
-
-
     </script>
 </body>
 
