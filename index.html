@@ -192,23 +192,13 @@
                 sexta: document.getElementById('sexta').value,
             };
 
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(formData), // Certifique-se de que "formData" está definido corretamente
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "error") {
-                        alert(data.message); // Exibe mensagem de erro
-                    } else {
-                        alert(data.message); // Exibe mensagem de sucesso
-                    }
+            fetch(scriptURL, { mode: 'no-cors' })
+                .then(response => {
+                    // Não é possível acessar response.json() diretamente
+                    console.log('Requisição enviada, mas a resposta não pode ser lida.');
                 })
                 .catch(error => {
-                    console.error("Erro ao enviar dados:", error); // Mensagem de erro corrigida
+                    console.error('Erro ao enviar requisição:', error);
                 });
         });
     </script>
