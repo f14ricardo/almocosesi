@@ -160,11 +160,16 @@
 
     <!-- Scripts -->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx8kuVpVQmMzDOO7frGwbfY34dHHz_R1cBgjFULCX8oixy3rIuSfEM9K-GiovqD1QBz/exec'; // Substitua pela sua URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxujNBIYqYVll4O4E3fXCb1gkTBlzEo7HLPFiiDsJfYUS9mQsR6d5uuYdc4Tt1iQmKB/exec'; // Substitua pela sua URL
 
         // Busca os funcionários ao carregar a página
         fetch(scriptURL)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na rede');
+                }
+                return response.json();
+            })
             .then(data => {
                 const select = document.getElementById('funcionario');
                 select.innerHTML = '<option value="" selected>Selecione um funcionário</option>';
@@ -177,6 +182,10 @@
             })
             .catch(error => {
                 console.error('Erro ao carregar funcionários:', error);
+                const alertDiv = document.getElementById('alert');
+                alertDiv.textContent = 'Erro ao carregar os funcionários. Verifique o console para mais detalhes.';
+                alertDiv.classList.remove('d-none');
+                alertDiv.classList.add('alert-danger');
             });
 
         // Envia os dados ao clicar no botão "Enviar"
