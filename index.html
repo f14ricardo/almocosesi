@@ -160,7 +160,6 @@
 
     <!-- Scripts -->
     <script>
-        // URL do Google Apps Script (substitua pela sua URL)
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzIJDIFSh05g3DpGB9boA3aG0FE_0IGfgD8wNg5YVGFtQ92pR8Au2B-YTTlhVW0jUH6/exec'; // Substitua pela sua URL
 
         // Busca os funcionários ao carregar a página
@@ -192,13 +191,32 @@
                 sexta: document.getElementById('sexta').value,
             };
 
-            fetch(scriptURL, { mode: 'no-cors' })
-                .then(response => {
-                    // Não é possível acessar response.json() diretamente
-                    console.log('Requisição enviada, mas a resposta não pode ser lida.');
+            fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(formData),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const alertDiv = document.getElementById('alert');
+                    if (data.status === "error") {
+                        alertDiv.textContent = data.message;
+                        alertDiv.classList.remove('d-none');
+                        alertDiv.classList.add('alert-danger');
+                    } else {
+                        alertDiv.textContent = data.message;
+                        alertDiv.classList.remove('d-none');
+                        alertDiv.classList.add('alert-success');
+                    }
                 })
                 .catch(error => {
-                    console.error('Erro ao enviar requisição:', error);
+                    console.error('Erro ao enviar dados:', error);
+                    const alertDiv = document.getElementById('alert');
+                    alertDiv.textContent = 'Erro ao enviar os dados.';
+                    alertDiv.classList.remove('d-none');
+                    alertDiv.classList.add('alert-danger');
                 });
         });
     </script>
