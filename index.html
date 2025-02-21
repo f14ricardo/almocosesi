@@ -160,65 +160,66 @@
 
     <!-- Scripts -->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIJDIFSh05g3DpGB9boA3aG0FE_0IGfgD8wNg5YVGFtQ92pR8Au2B-YTTlhVW0jUH6/exec'; // Substitua pela sua URL
+       const scriptURL = 'https://script.google.com/macros/s/AKfycbzIJDIFSh05g3DpGB9boA3aG0FE_0IGfgD8wNg5YVGFtQ92pR8Au2B-YTTlhVW0jUH6/exec'; // Substitua pela sua URL
 
-        // Busca os funcionários ao carregar a página
-        fetch(scriptURL)
-            .then(response => response.json())
-            .then(data => {
-                const select = document.getElementById('funcionario');
-                select.innerHTML = '<option value="" selected>Selecione um funcionário</option>';
-                data.forEach(funcionario => {
-                    const option = document.createElement('option');
-                    option.value = funcionario[1]; // ID
-                    option.textContent = funcionario[0]; // Nome
-                    select.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Erro ao carregar funcionários:', error);
-            });
+// Busca os funcionários ao carregar a página
+fetch(scriptURL)
+  .then(response => response.json())
+  .then(data => {
+    const select = document.getElementById('funcionario');
+    select.innerHTML = '<option value="" selected>Selecione um funcionário</option>';
+    data.forEach(funcionario => {
+      const option = document.createElement('option');
+      option.value = funcionario[1]; // ID
+      option.textContent = funcionario[0]; // Nome
+      select.appendChild(option);
+    });
+  })
+  .catch(error => {
+    console.error('Erro ao carregar funcionários:', error);
+  });
 
-        // Envia os dados ao clicar no botão "Enviar"
-        document.getElementById('formulario').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = {
-                funcionario: document.getElementById('funcionario').value,
-                segunda: document.getElementById('segunda').value,
-                terca: document.getElementById('terca').value,
-                quarta: document.getElementById('quarta').value,
-                quinta: document.getElementById('quinta').value,
-                sexta: document.getElementById('sexta').value,
-            };
+// Envia os dados ao clicar no botão "Enviar"
+document.getElementById('formulario').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const formData = {
+    funcionario: document.getElementById('funcionario').value,
+    segunda: document.getElementById('segunda').value,
+    terca: document.getElementById('terca').value,
+    quarta: document.getElementById('quarta').value,
+    quinta: document.getElementById('quinta').value,
+    sexta: document.getElementById('sexta').value,
+  };
 
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(formData),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const alertDiv = document.getElementById('alert');
-                    if (data.status === "error") {
-                        alertDiv.textContent = data.message;
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.classList.add('alert-danger');
-                    } else {
-                        alertDiv.textContent = data.message;
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.classList.add('alert-success');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro ao enviar dados:', error);
-                    const alertDiv = document.getElementById('alert');
-                    alertDiv.textContent = 'Erro ao enviar os dados.';
-                    alertDiv.classList.remove('d-none');
-                    alertDiv.classList.add('alert-danger');
-                });
-        });
+  fetch(scriptURL, {
+    method: 'POST',
+    body: JSON.stringify(formData),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      const alertDiv = document.getElementById('alert');
+      if (data.status === "error") {
+        alertDiv.textContent = data.message;
+        alertDiv.classList.remove('d-none');
+        alertDiv.classList.add('alert-danger');
+      } else {
+        alertDiv.textContent = data.message;
+        alertDiv.classList.remove('d-none');
+        alertDiv.classList.add('alert-success');
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao enviar dados:', error);
+      const alertDiv = document.getElementById('alert');
+      alertDiv.textContent = 'Erro ao enviar os dados.';
+      alertDiv.classList.remove('d-none');
+      alertDiv.classList.add('alert-danger');
+    });
+});
+
     </script>
 </body>
 
