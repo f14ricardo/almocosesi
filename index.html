@@ -161,9 +161,9 @@
     <!-- Scripts -->
     <script>
         // URL do Google Apps Script (substitua pela sua URL)
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzZ-MoV7UCf-lm3hEJlGylPpqAqhNxgKX34zIEGOaE_jz7jqCeGgnQOWrAD5klOWbqD/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx_k_BIByqxgQRBJWFE_dFNFlJQBhKceA6VgHKqjMIgBineV09hp8gZyxxbMvvBRz1c/exec'; // Substitua pela sua URL
 
-        // Busca os funcionários da planilha
+        // Busca os funcionários ao carregar a página
         fetch(scriptURL)
             .then(response => response.json())
             .then(data => {
@@ -194,14 +194,7 @@
 
             fetch(scriptURL, {
                 method: 'POST',
-                body: JSON.stringify({
-                    funcionario: document.getElementById('funcionario').value,
-                    segunda: document.getElementById('segunda').value,
-                    terca: document.getElementById('terca').value,
-                    quarta: document.getElementById('quarta').value,
-                    quinta: document.getElementById('quinta').value,
-                    sexta: document.getElementById('sexta').value,
-                }),
+                body: JSON.stringify(formData),
                 headers: {
                     'Content-Type': 'application/json',
                 },
