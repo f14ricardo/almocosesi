@@ -5,11 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marcação de Almoço</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ícones do Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- CSS Personalizado -->
     <style>
         body {
             background-color: #f8f9fa;
@@ -73,33 +70,24 @@
 
 <body>
     <div class="container">
-        <!-- Logo do SESI -->
         <img src="https://logodownload.org/wp-content/uploads/2016/10/sesi-logo.png" alt="Logo SESI" class="logo">
 
         <h1 class="text-center">
             <i class="bi bi-calendar-check"></i> Marcação de Almoço
         </h1>
 
-        <!-- Mensagem de alerta -->
-        <div id="alert" class="alert alert-danger d-none" role="alert"></div>
+        <div id="alert" class="alert d-none" role="alert"></div>
 
-        <!-- Formulário -->
         <form id="formulario">
-            <!-- Campo 1: ComboBox com nomes de funcionários -->
             <div class="mb-4">
                 <label for="funcionario" class="form-label">
                     <i class="bi bi-person"></i> Funcionário
                 </label>
-                <select class="form-select" id="funcionario" required>
-                    <option value="" selected>Carregando funcionários...</option>
-                </select>
+                <input type="text" class="form-control" id="funcionario" placeholder="Digite o nome" required>
             </div>
 
-            <!-- Campos dos dias da semana -->
             <div class="mb-4">
-                <label for="segunda" class="form-label">
-                    <i class="bi bi-calendar"></i> 2ª Feira
-                </label>
+                <label for="segunda" class="form-label"><i class="bi bi-calendar"></i> 2ª Feira</label>
                 <select class="form-select" id="segunda" required>
                     <option value="" selected>Selecione</option>
                     <option value="Sim">Sim</option>
@@ -108,9 +96,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="terca" class="form-label">
-                    <i class="bi bi-calendar"></i> 3ª Feira
-                </label>
+                <label for="terca" class="form-label"><i class="bi bi-calendar"></i> 3ª Feira</label>
                 <select class="form-select" id="terca" required>
                     <option value="" selected>Selecione</option>
                     <option value="Sim">Sim</option>
@@ -119,9 +105,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="quarta" class="form-label">
-                    <i class="bi bi-calendar"></i> 4ª Feira
-                </label>
+                <label for="quarta" class="form-label"><i class="bi bi-calendar"></i> 4ª Feira</label>
                 <select class="form-select" id="quarta" required>
                     <option value="" selected>Selecione</option>
                     <option value="Sim">Sim</option>
@@ -130,9 +114,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="quinta" class="form-label">
-                    <i class="bi bi-calendar"></i> 5ª Feira
-                </label>
+                <label for="quinta" class="form-label"><i class="bi bi-calendar"></i> 5ª Feira</label>
                 <select class="form-select" id="quinta" required>
                     <option value="" selected>Selecione</option>
                     <option value="Sim">Sim</option>
@@ -141,9 +123,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="sexta" class="form-label">
-                    <i class="bi bi-calendar"></i> 6ª Feira
-                </label>
+                <label for="sexta" class="form-label"><i class="bi bi-calendar"></i> 6ª Feira</label>
                 <select class="form-select" id="sexta" required>
                     <option value="" selected>Selecione</option>
                     <option value="Sim">Sim</option>
@@ -151,84 +131,58 @@
                 </select>
             </div>
 
-            <!-- Botão de Enviar -->
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-send"></i> Enviar
-            </button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Enviar</button>
         </form>
     </div>
 
-    <!-- Scripts -->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx6-1ecSzS2OOOf9gDfYVM7xV1exO9Hb2sUsKKvRRW4bE0NEVb5b_Nt24SDkIqg8eU/exec'; // Substitua pela sua URL
+        document.getElementById("formulario").addEventListener("submit", async function (event) {
+            event.preventDefault();
 
-        // Busca os funcionários ao carregar a página
-        fetch(scriptURL)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro na rede');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const select = document.getElementById('funcionario');
-                select.innerHTML = '<option value="" selected>Selecione um funcionário</option>';
-                data.forEach(funcionario => {
-                    const option = document.createElement('option');
-                    option.value = funcionario[1]; // ID
-                    option.textContent = funcionario[0]; // Nome
-                    select.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Erro ao carregar funcionários:', error);
-                const alertDiv = document.getElementById('alert');
-                alertDiv.textContent = 'Erro ao carregar os funcionários. Verifique o console para mais detalhes.';
-                alertDiv.classList.remove('d-none');
-                alertDiv.classList.add('alert-danger');
-            });
-
-        // Envia os dados ao clicar no botão "Enviar"
-        document.getElementById('formulario').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = {
-                funcionario: document.getElementById('funcionario').value,
-                segunda: document.getElementById('segunda').value,
-                terca: document.getElementById('terca').value,
-                quarta: document.getElementById('quarta').value,
-                quinta: document.getElementById('quinta').value,
-                sexta: document.getElementById('sexta').value,
+            const url = "https://prod-151.westus.logic.azure.com:443/workflows/7ba4d29efe994b658044d5601fdc1fdb/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sMjFcHwh7Ce8wDGVh9MKs5oUUm09EGCq3jCwccFlr8o";
+            const dados = {
+                funcionario: String(document.getElementById("funcionario").value),
+        segunda: String(document.getElementById("segunda").value),
+        terca: String(document.getElementById("terca").value),
+        quarta: String(document.getElementById("quarta").value),
+        quinta: String(document.getElementById("quinta").value),
+        sexta: String(document.getElementById("sexta").value)
             };
 
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(formData),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const alertDiv = document.getElementById('alert');
-                    if (data.status === "error") {
-                        alertDiv.textContent = data.message;
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.classList.add('alert-danger');
-                    } else {
-                        alertDiv.textContent = data.message;
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.classList.add('alert-success');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro ao enviar dados:', error);
-                    const alertDiv = document.getElementById('alert');
-                    alertDiv.textContent = 'Erro ao enviar os dados.';
-                    alertDiv.classList.remove('d-none');
-                    alertDiv.classList.add('alert-danger');
+            try {
+                const resposta = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(dados)
                 });
+
+                if (!resposta.ok) {
+                    throw new Error(`Erro HTTP: ${resposta.status}`);
+                }
+
+                const resultado = await resposta.json();
+                if (resultado.status === "success") {
+                    exibirMensagem("success", "Dados enviados com sucesso!");
+                } else {
+                    exibirMensagem("error", "Erro ao enviar os dados: " + resultado.message);
+                }
+
+            } catch (erro) {
+                exibirMensagem("error", "Erro ao enviar os dados. Verifique a conexão ou a URL do Power Automate.");
+                console.error("Erro: ", erro);
+            }
         });
+
+        function exibirMensagem(tipo, texto) {
+            const mensagem = document.getElementById("alert");
+            mensagem.className = tipo === "success" ? "alert alert-success" : "alert alert-danger";
+            mensagem.textContent = texto;
+            mensagem.classList.remove("d-none");
+        }
     </script>
+
 </body>
 
 </html>
