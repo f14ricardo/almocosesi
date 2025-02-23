@@ -83,9 +83,7 @@
                 <label for="funcionario" class="form-label">
                     <i class="bi bi-person"></i> Funcionário
                 </label>
-                <select class="form-select" id="funcionario" required>
-                    <option value="" selected>Selecione</option>
-                </select>
+                <input type="text" class="form-control" id="funcionario" placeholder="Digite o nome" required>
             </div>
 
             <div class="mb-4">
@@ -138,55 +136,6 @@
     </div>
 
     <script>
-        async function obterNomesFuncionarios() {
-            const urlPowerAutomate = 'https://prod-132.westus.logic.azure.com:443/workflows/802e2e86aef44ad09651c07d66f1a15b/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Mn-R6rIQqzFJfNyhvJIONXb-OqiY9an8FBzmP-ebGOk';
-
-            try {
-                const resposta = await fetch(urlPowerAutomate, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const textoResposta = await resposta.text(); // Texto simples
-                console.log("Resposta do Power Automate:", textoResposta);
-
-                if (!resposta.ok) throw new Error(`Erro HTTP: ${resposta.status}`);
-
-                // Converte a resposta em um array usando quebra de linha ou vírgula
-                const resultado = typeof textoResposta === 'string' ? JSON.parse(textoResposta) : textoResposta;
-                const funcionarios = Array.isArray(resultado.funcionarios) ? resultado.funcionarios : JSON.parse(resultado.funcionarios);
-                preencherCampoFuncionario(funcionarios);
-
-            } catch (erro) {
-                console.error('Erro ao buscar dados:', erro);
-                exibirMensagem("error", "Erro ao obter os nomes dos funcionários.");
-            }
-        }
-
-
-        function preencherCampoFuncionario(funcionarios) {
-            const selectFuncionario = document.getElementById("funcionario");
-            selectFuncionario.innerHTML = '<option value="" selected>Selecione</option>';
-
-            funcionarios.forEach(funcionario => {
-                const option = document.createElement("option");
-                option.value = funcionario;
-                option.textContent = funcionario;
-                selectFuncionario.appendChild(option);
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", obterNomesFuncionarios);
-
-        function exibirMensagem(tipo, texto) {
-            const mensagem = document.getElementById("alert");
-            mensagem.className = tipo === "success" ? "alert alert-success" : "alert alert-danger";
-            mensagem.textContent = texto;
-            mensagem.classList.remove("d-none");
-        }
-
         document.getElementById("formulario").addEventListener("submit", async function (event) {
             event.preventDefault();
 
@@ -225,6 +174,13 @@
                 console.error("Erro: ", erro);
             }
         });
+
+        function exibirMensagem(tipo, texto) {
+            const mensagem = document.getElementById("alert");
+            mensagem.className = tipo === "success" ? "alert alert-success" : "alert alert-danger";
+            mensagem.textContent = texto;
+            mensagem.classList.remove("d-none");
+        }
     </script>
 
 </body>
