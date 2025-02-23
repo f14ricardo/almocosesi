@@ -190,8 +190,11 @@
         document.getElementById("formulario").addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            const botaoEnviar = document.querySelector("button[type='submit']"); // Seleciona o botão "Enviar"
-            botaoEnviar.disabled = true; // Desabilita o botão
+            // Desabilita todos os elementos do formulário
+            const elementosFormulario = document.querySelectorAll("#formulario input, #formulario select, #formulario button");
+            elementosFormulario.forEach(elemento => {
+                elemento.disabled = true; // Desabilita cada elemento
+            });
 
             const url = "https://prod-151.westus.logic.azure.com:443/workflows/7ba4d29efe994b658044d5601fdc1fdb/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sMjFcHwh7Ce8wDGVh9MKs5oUUm09EGCq3jCwccFlr8o";
             const dados = {
