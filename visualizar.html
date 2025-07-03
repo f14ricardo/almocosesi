@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Almoço dos Funcionários</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #fff;
+    }
+
+    thead tr {
+      background-color: #f8f9fa !important; /* cinza claro */
+      color: #212529 !important; /* texto escuro */
+    }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2::before {
+      content: "🍽️";
+    }
+  </style>
+</head>
+<body class="container mt-5">
+
+  <h2 class="mb-4">Lista de Almoço dos Funcionários</h2>
+
+  <div id="loading" class="text-primary mb-3" style="display: none;">
+    🔄 Carregando dados...
+  </div>
+
+  <button class="btn btn-success mb-3" onclick="carregarDados()">Atualizar Dados</button>
+
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Funcionário</th>
+        <th scope="col">2ª Feira</th>
+        <th scope="col">3ª Feira</th>
+        <th scope="col">4ª Feira</th>
+        <th scope="col">5ª Feira</th>
+        <th scope="col">6ª Feira</th>
+      </tr>
+    </thead>
+    <tbody id="tabelaAlmoco"></tbody>
+  </table>
+
+  <script>
+    async function carregarDados() {
+      const loading = document.getElementById('loading');
+      const tabela = document.getElementById('tabelaAlmoco');
+      tabela.innerHTML = '';
+      loading.style.display = 'block';
+
+      try {
+        const resposta = await fetch('https://prod-138.westus.logic.azure.com:443/workflows/6659ca37824346beba787bb377094321/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gCSsiaZV223yM9w8nI_nyAiMOp9eK0AJZdK8p8f2myw', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        });
+
+        if (!resposta.ok) {
+          throw new Error(`Erro HTTP ${resposta.status}`);
+        }
+
+        const dados = await resposta.json();
+        loading.style.display = 'none';
+
+        if (!dados.Funcionarios || dados.Funcionarios.length === 0) {
+          tabela.innerHTML = '<tr><td colspan="6">Nenhum dado disponível</td></tr>';
+          return;
+        }
+
+        const linhas = dados.Funcionarios.map(func => `
+          <tr>
+            <td>${func['Funcionário'] ?? ''}</td>
+            <td>${func['2ª Feira'] ?? ''}</td>
+            <td>${func['3ª Feira'] ?? ''}</td>
+            <td>${func['4ª Feira'] ?? ''}</td>
+            <td>${func['5ª Feira'] ?? ''}</td>
+            <td>${func['6ª Feira'] ?? ''}</td>
+          </tr>
+        `).join('');
+
+        tabela.innerHTML = linhas;
+
+      } catch (erro) {
+        loading.style.display = 'none';
+        console.error('Erro ao carregar dados:', erro);
+        tabela.innerHTML = `<tr><td colspan="6">Erro ao carregar dados: ${erro.message}</td></tr>`;
+      }
+    }
+
+    // Carregar automaticamente ao abrir
+    window.onload = carregarDados;
+  </script>
+
+</body>
+</html>
