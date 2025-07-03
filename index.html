@@ -32,7 +32,7 @@
             color: #495057;
         }
 
-        .form-select {
+        .form-select {      
             border-radius: 5px;
             border: 1px solid #ced4da;
         }
@@ -79,6 +79,59 @@
         .alert {
             margin-top: 20px;
         }
+
+/* Botão Enviar */
+.btn-enviar {
+  background-color: #0056b3 !important; /* azul SESI */
+  color: #fff !important;
+  border: none !important;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.btn-enviar:hover {
+  background-color: #004494 !important;
+}
+
+/* Botão Visualizar Lista */
+.btn-visualizar {
+  background-color: #f0f0f0 !important;
+  color: #333 !important;
+  border: 1px solid #ccc !important;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.btn-visualizar:hover {
+  background-color: #e0e0e0 !important;
+}
+
+.btn-cardapio {
+  background-color: #f44336 !important; /* vermelho mais claro */
+  color: #fff !important;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.btn-cardapio:hover {
+  background-color: #d32f2f !important;
+}
+
+
+
     </style>
 </head>
 
@@ -147,11 +200,21 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Enviar</button>
+            <button type="submit" class="btn btn-enviar">
+              <i class="bi bi-send"></i> Enviar
+            </button>
+
         </form>
-        <a href="visualizar.html" target="_blank" class="btn btn-outline-secondary mt-3 w-100">
+        
+        <a href="visualizar.html" target="_blank" class="btn btn-visualizar">
         <i class="bi bi-table"></i> Visualizar Lista de Almoço
-</a>
+        </a>
+
+
+        <a href="https://SEU-LINK-PDF-AQUI" target="_blank" class="btn btn-cardapio">
+        <i class="bi bi-file-earmark-pdf"></i> Ver Cardápio da Semana
+        </a>
+
 
     </div>
 
