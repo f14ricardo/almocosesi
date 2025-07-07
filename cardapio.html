@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload de Cardápio</title>
+</head>
+<body>
+  <h2>Enviar Cardápio PDF para o GitHub</h2>
+  <input type="file" id="fileInput" accept="application/pdf" />
+  <button onclick="enviarArquivo()">Enviar</button>
+
+  <p id="status"></p>
+
+  <script>
+    async function enviarArquivo() {
+      const input = document.getElementById('fileInput');
+      const status = document.getElementById('status');
+
+      if (input.files.length === 0) {
+        status.textContent = "Selecione um arquivo primeiro.";
+        return;
+      }
+
+      const arquivo = input.files[0];
+      const nomeArquivo = arquivo.name;
+
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const base64 = reader.result.split(',')[1]; // remove prefixo base64
+
+        const payload = {
+          nomeArquivo: nomeArquivo,
+          arquivoBase64: base64
+        };
+
+        try {
+          const resposta = await fetch("https://prod-103.westus.logic.azure.com:443/workflows/83cf9382dafc42f2b9a51e26192c533a/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=juWjcJsrrmCvxgV-SN57xOMiG64HxCBk3ilUGVZjdww", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (resposta.ok) {
+            status.textContent = "✅ Arquivo enviado com sucesso!";
+          } else {
+            const erro = await resposta.text();
+            status.textContent = "❌ Erro: " + erro;
+          }
+        } catch (erro) {
+          status.textContent = "❌ Erro ao enviar: " + erro.message;
+        }
+      };
+
+      reader.readAsDataURL(arquivo);
+    }
+  </script>
+</body>
+</html>
