@@ -80,55 +80,72 @@
             margin-top: 20px;
         }
 
-/* Botão Enviar */
-.btn-enviar {
-  background-color: #0056b3 !important; /* azul SESI */
-  color: #fff !important;
-  border: none !important;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  width: 100%;
-  margin-top: 20px;
-  font-size: 16px;
-}
+    /* Botão Enviar */
+    .btn-enviar {
+    background-color: #0056b3 !important; /* azul SESI */
+    color: #fff !important;
+    border: none !important;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 20px;
+    font-size: 16px;
+    }
 
-.btn-enviar:hover {
-  background-color: #004494 !important;
-}
+    .btn-enviar:hover {
+    background-color: #004494 !important;
+    }
 
-/* Botão Visualizar Lista */
-.btn-visualizar {
-  background-color: #f0f0f0 !important;
-  color: #333 !important;
-  border: 1px solid #ccc !important;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 500;
-  width: 100%;
-  margin-top: 10px;
-  font-size: 15px;
-}
+    /* Botão Visualizar Lista */
+    .btn-visualizar {
+    background-color: #f0f0f0 !important;
+    color: #333 !important;
+    border: 1px solid #ccc !important;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 15px;
+    }
 
-.btn-visualizar:hover {
-  background-color: #e0e0e0 !important;
-}
+    .btn-visualizar:hover {
+    background-color: #e0e0e0 !important;
+    }
 
-.btn-cardapio {
-  background-color: #f44336 !important; /* vermelho mais claro */
-  color: #fff !important;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  width: 100%;
-  margin-top: 10px;
-  font-size: 15px;
-}
+    .btn-cardapio {
+    background-color: #f44336 !important; /* vermelho mais claro */
+    color: #fff !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 15px;
+    }
 
-.btn-cardapio:hover {
-  background-color: #d32f2f !important;
-}
+    .btn-admin {
+    background-color: #ffc107 !important; /* amarelo (Bootstrap warning) */
+    color: #212529 !important; /* texto escuro para melhor contraste */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+    }
+
+    .btn-admin:hover {
+        background-color: #e0a800 !important; /* amarelo mais escuro no hover */
+    }
+
+    .btn-cardapio:hover {
+    background-color: #d32f2f !important;
+    }
 
 
 
@@ -211,8 +228,12 @@
         </a>
 
 
-        <a href="https://SEU-LINK-PDF-AQUI" target="_blank" class="btn btn-cardapio">
+        <a href="https://raw.githubusercontent.com/f14ricardo/almocosesi/main/cardapio.pdf" target="_blank" class="btn btn-cardapio">
         <i class="bi bi-file-earmark-pdf"></i> Ver Cardápio da Semana
+        </a>
+
+        <a href="cardapio.html" target="_blank" class="btn btn-admin">
+            <i class="bi bi-gear-fill"></i> Administração
         </a>
 
 

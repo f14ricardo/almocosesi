@@ -3,58 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <title>Upload de Cardápio</title>
+  <style>
+    body {
+      background-color: #f0f2f5;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 350px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input[type="file"], input[type="password"] {
+      padding: 10px;
+      width: 90%;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    code {
+      background-color: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
 </head>
 <body>
-  <h2>Enviar Cardápio PDF para o GitHub</h2>
+
+<div class="container" id="conteudo" style="display:none;">
+  <h2>Enviar Cardápio PDF</h2>
+  <p style="color: #d9534f; font-weight: bold;">
+    ⚠️ O arquivo deve se chamar <code>cardapio.pdf</code>
+  </p>
   <input type="file" id="fileInput" accept="application/pdf" />
   <button onclick="enviarArquivo()">Enviar</button>
-
   <p id="status"></p>
+</div>
 
-  <script>
-    async function enviarArquivo() {
-      const input = document.getElementById('fileInput');
-      const status = document.getElementById('status');
+<div class="container" id="login">
+  <h2>Área Restrita 🔒</h2>
+  <input type="password" id="senha" placeholder="Digite a senha" />
+  <br>
+  <button onclick="verificarSenha()">Entrar</button>
+  <p id="mensagemSenha"></p>
+</div>
 
-      if (input.files.length === 0) {
-        status.textContent = "Selecione um arquivo primeiro.";
-        return;
-      }
+<script>
+  const SENHA_CORRETA = "sesi113uae"; // altere aqui se quiser mudar a senha
 
-      const arquivo = input.files[0];
-      const nomeArquivo = arquivo.name;
+  function verificarSenha() {
+    const senhaDigitada = document.getElementById("senha").value;
+    const mensagem = document.getElementById("mensagemSenha");
 
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const base64 = reader.result.split(',')[1]; // remove prefixo base64
+    if (senhaDigitada === SENHA_CORRETA) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("conteudo").style.display = "block";
+    } else {
+      mensagem.textContent = "❌ Senha incorreta.";
+      mensagem.style.color = "red";
+    }
+  }
 
-        const payload = {
-          nomeArquivo: nomeArquivo,
-          arquivoBase64: base64
-        };
+  async function enviarArquivo() {
+    const input = document.getElementById('fileInput');
+    const status = document.getElementById('status');
 
-        try {
-          const resposta = await fetch("https://prod-103.westus.logic.azure.com:443/workflows/83cf9382dafc42f2b9a51e26192c533a/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=juWjcJsrrmCvxgV-SN57xOMiG64HxCBk3ilUGVZjdww", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-          });
+    if (input.files.length === 0) {
+      status.textContent = "Selecione um arquivo primeiro.";
+      status.style.color = "red";
+      return;
+    }
 
-          if (resposta.ok) {
-            status.textContent = "✅ Arquivo enviado com sucesso!";
-          } else {
-            const erro = await resposta.text();
-            status.textContent = "❌ Erro: " + erro;
-          }
-        } catch (erro) {
-          status.textContent = "❌ Erro ao enviar: " + erro.message;
-        }
+    const arquivo = input.files[0];
+    const nomeArquivo = arquivo.name;
+
+    if (nomeArquivo.toLowerCase() !== "cardapio.pdf") {
+      status.textContent = "❌ O nome do arquivo deve ser exatamente 'cardapio.pdf'.";
+      status.style.color = "red";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function () {
+      const base64 = reader.result.split(',')[1];
+
+      const payload = {
+        nomeArquivo: nomeArquivo,
+        arquivoBase64: base64
       };
 
-      reader.readAsDataURL(arquivo);
-    }
-  </script>
+      try {
+        const resposta = await fetch("https://prod-07.westus.logic.azure.com:443/workflows/967b0a185f824fe98e49871e32397216/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wR8NKadX_EIrkZfSFw7wawW3biUZSD4-UhIq16jAr-8", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (resposta.ok) {
+          status.textContent = "✅ Arquivo enviado com sucesso!";
+          status.style.color = "green";
+        } else {
+          const erro = await resposta.text();
+          status.textContent = "❌ Erro: " + erro;
+          status.style.color = "red";
+        }
+      } catch (erro) {
+        status.textContent = "❌ Erro ao enviar: " + erro.message;
+        status.style.color = "red";
+      }
+    };
+
+    reader.readAsDataURL(arquivo);
+  }
+</script>
+
 </body>
 </html>
