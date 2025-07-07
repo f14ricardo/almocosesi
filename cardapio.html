@@ -51,6 +51,16 @@
       border-radius: 4px;
       font-family: monospace;
     }
+    .link-planilha {
+      display: block;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .link-planilha:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -63,6 +73,10 @@
   <input type="file" id="fileInput" accept="application/pdf" />
   <button onclick="enviarArquivo()">Enviar</button>
   <p id="status"></p>
+
+  <a class="link-planilha" href="https://docs.google.com/spreadsheets/d/1Ktt6c80D-18VpSOAyDgfhEl4RO-Leyeb/edit#gid=1198460219" target="_blank">
+    📎 Acessar Planilha de Controle de Cardápios
+  </a>
 </div>
 
 <div class="container" id="login">
