@@ -5,238 +5,290 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marcação de Almoço</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #2b3440;
+            --sesi-blue: #0056b3;
+            --sesi-blue-hover: #004494;
+        }
+
         body {
-            background-color: #f8f9fa;
+            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px 0;
         }
 
-        .container {
-            max-width: 600px;
-            margin-top: 20px;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #0d6efd;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            font-weight: bold;
-            color: #495057;
-        }
-
-        .form-select {      
-            border-radius: 5px;
-            border: 1px solid #ced4da;
-        }
-
-        .btn-primary {
-            background-color: #0d6efd;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
+        .container-custom {
             width: 100%;
-            margin-top: 20px;
+            max-width: 500px;
+            margin: auto;
         }
 
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-        }
-
-        .btn-success {
-            background-color: #198754;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 20px;
-        }	
-
-        .btn-success:hover {
-            background-color: #157347;
-        }
-
-        .bi {
-            margin-right: 8px;
+        .main-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            padding: 2.5rem;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .logo {
             display: block;
-            margin: 0 auto 3px auto;
-            max-width: 150px;
+            margin: 0 auto 1.5rem auto;
+            max-width: 140px;
             height: auto;
         }
 
-        .alert {
-            margin-top: 20px;
+        h1 {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-    /* Botão Enviar */
-    .btn-enviar {
-    background-color: #0056b3 !important; /* azul SESI */
-    color: #fff !important;
-    border: none !important;
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-weight: 600;
-    width: 100%;
-    margin-top: 20px;
-    font-size: 16px;
-    }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .btn-enviar:hover {
-    background-color: #004494 !important;
-    }
+        .form-label i {
+            color: #6c757d;
+        }
 
-    /* Botão Visualizar Lista */
-    .btn-visualizar {
-    background-color: #f0f0f0 !important;
-    color: #333 !important;
-    border: 1px solid #ccc !important;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 500;
-    width: 100%;
-    margin-top: 10px;
-    font-size: 15px;
-    }
+        .form-select {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 0.6rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            background-color: #f8f9fa;
+        }
 
-    .btn-visualizar:hover {
-    background-color: #e0e0e0 !important;
-    }
+        .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            background-color: #fff;
+        }
 
-    .btn-cardapio {
-    background-color: #f44336 !important; /* vermelho mais claro */
-    color: #fff !important;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 600;
-    width: 100%;
-    margin-top: 10px;
-    font-size: 15px;
-    }
+        /* Animação e estilo global dos botões */
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 12px 20px;
+            width: 100%;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
 
-    .btn-admin {
-    background-color: #ffc107 !important; /* amarelo (Bootstrap warning) */
-    color: #212529 !important; /* texto escuro para melhor contraste */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 600;
-    width: 100%;
-    margin-top: 10px;
-    font-size: 15px;
-    transition: background-color 0.3s ease;
-    }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
 
-    .btn-admin:hover {
-        background-color: #e0a800 !important; /* amarelo mais escuro no hover */
-    }
+        .btn-enviar {
+            background-color: var(--sesi-blue);
+            color: #fff;
+            border: none;
+            margin-top: 1rem;
+        }
 
-    .btn-cardapio:hover {
-    background-color: #d32f2f !important;
-    }
+        .btn-enviar:hover, .btn-enviar:focus {
+            background-color: var(--sesi-blue-hover);
+            color: #fff;
+        }
 
+        .btn-enviar:disabled {
+            background-color: #6c757d;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
+        /* Divisória para as ações secundárias */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #adb5bd;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
 
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .divider:not(:empty)::before { margin-right: .5em; }
+        .divider:not(:empty)::after { margin-left: .5em; }
+
+        /* Botões Secundários */
+        .btn-visualizar {
+            background-color: #f8f9fa;
+            color: #2b3440;
+            border: 1px solid #dee2e6;
+        }
+        .btn-visualizar:hover {
+            background-color: #e9ecef;
+            color: #2b3440;
+        }
+
+        .btn-cardapio {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .btn-cardapio:hover {
+            background-color: #fecaca;
+            color: #b91c1c;
+        }
+
+        .btn-admin {
+            background-color: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+        .btn-admin:hover {
+            background-color: #fde68a;
+            color: #b45309;
+        }
+
+        .alert {
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 1rem;
+        }
+        
+        .actions-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <img src="https://logodownload.org/wp-content/uploads/2016/10/sesi-logo.png" alt="Logo SESI" class="logo">
+    <div class="container-custom">
+        <div class="main-card">
+            
+            <img src="https://logodownload.org/wp-content/uploads/2016/10/sesi-logo.png" alt="Logo SESI" class="logo">
 
-        <h1 class="text-center">
-            <i class="bi bi-calendar-check"></i> Marcação de Almoço
-        </h1>
+            <h1>
+                <i class="bi bi-calendar2-check text-primary"></i> 
+                Marcação de Almoço
+            </h1>
 
-        <div id="alert" class="alert d-none" role="alert"></div>
+            <div id="alert" class="alert d-none shadow-sm" role="alert"></div>
 
-        <form id="formulario">
-            <div class="mb-3">
-                <label for="funcionario" class="form-label">
-                    <i class="bi bi-person"></i> Funcionário
-                </label>
-                <select class="form-select" id="funcionario" required>
-                    <option value="" selected>Selecione</option>
-                </select>
+            <form id="formulario">
+                <div class="mb-3">
+                    <label for="funcionario" class="form-label">
+                        <i class="bi bi-person-fill"></i> Funcionário
+                    </label>
+                    <select class="form-select" id="funcionario" required>
+                        <option value="" selected>Carregando lista...</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="segunda" class="form-label"><i class="bi bi-calendar"></i> 2ª Feira</label>
+                    <select class="form-select" id="segunda" required>
+                        <option value="" selected>Selecione</option>
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="terca" class="form-label"><i class="bi bi-calendar"></i> 3ª Feira</label>
+                    <select class="form-select" id="terca" required>
+                        <option value="" selected>Selecione</option>
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="quarta" class="form-label"><i class="bi bi-calendar"></i> 4ª Feira</label>
+                    <select class="form-select" id="quarta" required>
+                        <option value="" selected>Selecione</option>
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="quinta" class="form-label"><i class="bi bi-calendar"></i> 5ª Feira</label>
+                    <select class="form-select" id="quinta" required>
+                        <option value="" selected>Selecione</option>
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="sexta" class="form-label"><i class="bi bi-calendar"></i> 6ª Feira</label>
+                    <select class="form-select" id="sexta" required>
+                        <option value="" selected>Selecione</option>
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-custom btn-enviar" id="btnSubmit">
+                    <i class="bi bi-send-fill"></i> Enviar Marcação
+                </button>
+            </form>
+            
+            <div class="divider">Acesso Rápido</div>
+
+            <div class="actions-grid">
+                <a href="visualizar.html" target="_blank" class="btn-custom btn-visualizar">
+                    <i class="bi bi-table"></i> Visualizar Lista de Almoço
+                </a>
+
+                <a href="https://docs.google.com/gview?url=https://raw.githubusercontent.com/f14ricardo/almocosesi/main/cardapio.pdf&embedded=true" target="_blank" class="btn-custom btn-cardapio">
+                    <i class="bi bi-file-earmark-pdf-fill"></i> Cardápio da Semana
+                </a>
+
+                <a href="cardapio.html" target="_blank" class="btn-custom btn-admin">
+                    <i class="bi bi-gear-fill"></i> Administração
+                </a>
             </div>
 
-            <div class="mb-3">
-                <label for="segunda" class="form-label"><i class="bi bi-calendar"></i> 2ª Feira</label>
-                <select class="form-select" id="segunda" required>
-                    <option value="" selected>Selecione</option>
-                    <option value="Sim">Sim</option>
-                    <option value="Não">Não</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="terca" class="form-label"><i class="bi bi-calendar"></i> 3ª Feira</label>
-                <select class="form-select" id="terca" required>
-                    <option value="" selected>Selecione</option>
-                    <option value="Sim">Sim</option>
-                    <option value="Não">Não</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="quarta" class="form-label"><i class="bi bi-calendar"></i> 4ª Feira</label>
-                <select class="form-select" id="quarta" required>
-                    <option value="" selected>Selecione</option>
-                    <option value="Sim">Sim</option>
-                    <option value="Não">Não</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="quinta" class="form-label"><i class="bi bi-calendar"></i> 5ª Feira</label>
-                <select class="form-select" id="quinta" required>
-                    <option value="" selected>Selecione</option>
-                    <option value="Sim">Sim</option>
-                    <option value="Não">Não</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="sexta" class="form-label"><i class="bi bi-calendar"></i> 6ª Feira</label>
-                <select class="form-select" id="sexta" required>
-                    <option value="" selected>Selecione</option>
-                    <option value="Sim">Sim</option>
-                    <option value="Não">Não</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-enviar">
-              <i class="bi bi-send"></i> Enviar
-            </button>
-
-        </form>
-        
-        <a href="visualizar.html" target="_blank" class="btn btn-visualizar">
-        <i class="bi bi-table"></i> Visualizar Lista de Almoço
-        </a>
-
-
-        <a href="https://docs.google.com/gview?url=https://raw.githubusercontent.com/f14ricardo/almocosesi/main/cardapio.pdf&embedded=true" target="_blank" class="btn btn-cardapio">
-        <i class="bi bi-file-earmark-pdf"></i> Ver Cardápio da Semana
-        </a>
-
-        <a href="cardapio.html" target="_blank" class="btn btn-admin">
-            <i class="bi bi-gear-fill"></i> Administração
-        </a>
-
-
+        </div>
     </div>
 
     <script>
@@ -251,26 +303,25 @@
                     }
                 });
 
-                const textoResposta = await resposta.text(); // Texto simples
+                const textoResposta = await resposta.text(); 
                 console.log("Resposta do Power Automate:", textoResposta);
 
                 if (!resposta.ok) throw new Error(`Erro HTTP: ${resposta.status}`);
 
-                // Converte a resposta em um array usando quebra de linha ou vírgula
                 const resultado = typeof textoResposta === 'string' ? JSON.parse(textoResposta) : textoResposta;
                 const funcionarios = Array.isArray(resultado.funcionarios) ? resultado.funcionarios : JSON.parse(resultado.funcionarios);
                 preencherCampoFuncionario(funcionarios);
 
             } catch (erro) {
                 console.error('Erro ao buscar dados:', erro);
-                exibirMensagem("error", "Erro ao obter os nomes dos funcionários.");
+                exibirMensagem("error", "Erro ao carregar a lista de funcionários.");
+                document.getElementById("funcionario").innerHTML = '<option value="">Erro ao carregar</option>';
             }
         }
 
-
         function preencherCampoFuncionario(funcionarios) {
             const selectFuncionario = document.getElementById("funcionario");
-            selectFuncionario.innerHTML = '<option value="" selected>Selecione</option>';
+            selectFuncionario.innerHTML = '<option value="" selected>Selecione seu nome</option>';
 
             funcionarios.forEach(funcionario => {
                 const option = document.createElement("option");
@@ -284,18 +335,27 @@
 
         function exibirMensagem(tipo, texto) {
             const mensagem = document.getElementById("alert");
-            mensagem.className = tipo === "success" ? "alert alert-success" : "alert alert-danger";
-            mensagem.textContent = texto;
+            mensagem.className = tipo === "success" ? "alert alert-success shadow-sm" : "alert alert-danger shadow-sm";
+            mensagem.innerHTML = tipo === "success" ? `<i class="bi bi-check-circle-fill me-2"></i> ${texto}` : `<i class="bi bi-exclamation-triangle-fill me-2"></i> ${texto}`;
             mensagem.classList.remove("d-none");
+            
+            // Rola a página para o topo do alerta
+            mensagem.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
 
         document.getElementById("formulario").addEventListener("submit", async function (event) {
             event.preventDefault();
 
+            const btnSubmit = document.getElementById("btnSubmit");
+            const textoOriginalBtn = btnSubmit.innerHTML;
+
+            // Altera botão para estado de carregamento
+            btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Enviando...';
+            
             // Desabilita todos os elementos do formulário
             const elementosFormulario = document.querySelectorAll("#formulario input, #formulario select, #formulario button");
             elementosFormulario.forEach(elemento => {
-                elemento.disabled = true; // Desabilita cada elemento
+                elemento.disabled = true;
             });
 
             const url = "https://prod-151.westus.logic.azure.com:443/workflows/7ba4d29efe994b658044d5601fdc1fdb/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sMjFcHwh7Ce8wDGVh9MKs5oUUm09EGCq3jCwccFlr8o";
@@ -323,18 +383,26 @@
 
                 const resultado = await resposta.json();
                 if (resultado.status === "success") {
-                    exibirMensagem("success", "Dados enviados com sucesso!");
+                    exibirMensagem("success", "Sua marcação foi enviada com sucesso!");
+                    // Opcional: recarregar a página após X segundos ou limpar form
                 } else {
                     exibirMensagem("error", "Erro ao enviar os dados: " + resultado.message);
+                    restaurarFormulario(elementosFormulario, btnSubmit, textoOriginalBtn);
                 }
 
             } catch (erro) {
-                exibirMensagem("error", "Erro ao enviar os dados. Verifique a conexão ou a URL do Power Automate.");
+                exibirMensagem("error", "Erro de conexão ao tentar enviar sua marcação.");
                 console.error("Erro: ", erro);
+                restaurarFormulario(elementosFormulario, btnSubmit, textoOriginalBtn);
             }
         });
+
+        function restaurarFormulario(elementos, botao, textoOriginal) {
+            elementos.forEach(elemento => {
+                elemento.disabled = false;
+            });
+            botao.innerHTML = textoOriginal;
+        }
     </script>
-
 </body>
-
 </html>
