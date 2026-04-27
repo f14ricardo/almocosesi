@@ -13,15 +13,32 @@
       --bg-color: #f4f6f8;
       --card-bg: #ffffff;
       --text-main: #2b3440;
+      --border-soft: #e9ecef;
     }
 
-    body { 
-      background-color: var(--bg-color); 
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-color);
       font-family: 'Inter', sans-serif;
       color: var(--text-main);
     }
 
+    .page-wrap {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 24px 14px 40px;
+    }
+
     .main-card {
+      width: 100%;
       background-color: var(--card-bg);
       border-radius: 16px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
@@ -29,10 +46,59 @@
       border: 1px solid rgba(0,0,0,0.05);
     }
 
-    /* Estilização da Tabela */
-    .table-hover tbody tr:hover {
-      background-color: #f8f9fa;
+    .top-actions,
+    .filters-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
     }
+
+    .top-actions { justify-content: space-between; }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filters-section {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .btn-custom {
+      border-radius: 8px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 12px;
+    }
+
+    table {
+      min-width: 760px;
+      margin-bottom: 0 !important;
+    }
+
+    .table-hover tbody tr:hover { background-color: #f8f9fa; }
 
     thead th {
       background-color: #f8f9fa !important;
@@ -41,9 +107,10 @@
       text-transform: uppercase;
       font-size: 0.75rem;
       letter-spacing: 0.5px;
-      border-bottom: 2px solid #e9ecef !important;
+      border-bottom: 2px solid var(--border-soft) !important;
       padding-top: 1rem !important;
       padding-bottom: 1rem !important;
+      white-space: nowrap;
     }
 
     tbody td {
@@ -52,7 +119,12 @@
       padding: 1rem 0.75rem !important;
     }
 
-    /* Badges para Sim/Não */
+    tbody td:first-child,
+    thead th:first-child {
+      min-width: 230px;
+      word-break: break-word;
+    }
+
     .badge-sim {
       background-color: #d1e7dd;
       color: #0f5132;
@@ -68,109 +140,219 @@
       font-size: 0.85rem;
     }
 
-    /* Linha de Total */
     .linha-total td {
       background-color: #2b3440 !important;
       color: #ffffff !important;
       font-weight: 700;
       font-size: 1rem;
       border: none;
+      white-space: nowrap;
     }
-    
+
     .linha-total td:first-child {
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;
     }
+
     .linha-total td:last-child {
       border-top-right-radius: 8px;
       border-bottom-right-radius: 8px;
     }
 
-    /* Botões Customizados */
-    .btn-custom {
-      border-radius: 8px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
-    }
+    @media (max-width: 576px) {
+      .page-wrap {
+        padding: 10px 8px 28px;
+      }
 
-    .btn-custom:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
+      .main-card {
+        padding: 1rem;
+        border-radius: 14px;
+      }
 
-    .filters-section {
-      background-color: #f8f9fa;
-      padding: 1rem;
-      border-radius: 12px;
-      border: 1px solid #e9ecef;
+      .top-actions {
+        align-items: stretch;
+      }
+
+      .top-actions h2 {
+        width: 100%;
+        font-size: 1.35rem !important;
+        line-height: 1.2;
+      }
+
+      .action-buttons,
+      .action-buttons .btn,
+      .filters-section .btn {
+        width: 100%;
+      }
+
+      .filters-section {
+        align-items: stretch;
+      }
+
+      .filters-section span {
+        width: 100%;
+        margin-bottom: 2px;
+      }
+
+      .table-responsive {
+        overflow-x: visible;
+      }
+
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+
+      thead { display: none; }
+
+      tbody tr {
+        background: #ffffff;
+        border: 1px solid var(--border-soft);
+        border-radius: 14px;
+        margin-bottom: 12px;
+        padding: 10px 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      }
+
+      tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border: none !important;
+        border-bottom: 1px solid #f0f2f4 !important;
+        padding: 0.7rem 0 !important;
+        text-align: right !important;
+        font-size: 0.95rem;
+      }
+
+      tbody td:last-child { border-bottom: none !important; }
+
+      tbody td:first-child {
+        display: block;
+        text-align: left !important;
+        min-width: 0;
+        font-size: 1rem;
+        font-weight: 700 !important;
+        padding-bottom: 0.85rem !important;
+      }
+
+      tbody td:not(:first-child)::before {
+        content: attr(data-label);
+        color: #6c757d;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.4px;
+        text-align: left;
+      }
+
+      .badge-sim {
+        min-width: 48px;
+        text-align: center;
+      }
+
+      .linha-total {
+        background: #2b3440 !important;
+        color: #ffffff !important;
+      }
+
+      .linha-total td {
+        background: transparent !important;
+        color: #ffffff !important;
+      }
+
+      .linha-total td:not(:first-child)::before {
+        color: rgba(255,255,255,0.8);
+      }
     }
 
     @media print {
       body { background-color: #fff; }
+      .page-wrap { padding: 0; width: 100%; }
       .main-card { box-shadow: none; border: none; padding: 0; }
       .no-print { display: none !important; }
       .badge-sim { border: 1px solid #0f5132; background: transparent; color: #000; }
       .linha-total td { background-color: #eee !important; color: #000 !important; }
+      table { min-width: 0; }
     }
   </style>
 </head>
 
-<body class="container mt-4 mb-5">
+<body>
 
-  <div class="main-card">
-    
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-      <h2 class="m-0 fw-bold d-flex align-items-center gap-2" style="font-size: 1.5rem;">
-        🍽️ Lista de Almoço
-      </h2>
-      <div class="d-flex gap-2 no-print">
-        <button class="btn btn-outline-secondary btn-custom" onclick="window.print()">
-          🖨️ Imprimir
-        </button>
-        <button class="btn btn-primary btn-custom shadow-sm" onclick="carregarDados()">
-          🔄 Atualizar
-        </button>
+  <main class="page-wrap">
+    <div class="main-card">
+
+      <div class="top-actions mb-4">
+        <h2 class="m-0 fw-bold d-flex align-items-center gap-2" style="font-size: 1.5rem;">
+          🍽️ Lista de Almoço
+        </h2>
+
+        <div class="action-buttons no-print">
+          <button class="btn btn-outline-secondary btn-custom" onclick="window.print()">
+            🖨️ Imprimir
+          </button>
+          <button class="btn btn-primary btn-custom shadow-sm" onclick="carregarDados()">
+            🔄 Atualizar
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div class="filters-section d-flex flex-wrap gap-2 mb-4 no-print align-items-center">
-      <span class="text-muted small fw-semibold me-2 text-uppercase">Filtros:</span>
-      <button class="btn btn-white border bg-white btn-custom" onclick="mostrarTodos()">👥 Todos</button>
-      <button class="btn btn-white border bg-white btn-custom" onclick="filtrarProfessores()">👨‍🏫 Professores</button>
-      <button class="btn btn-white border bg-white btn-custom" onclick="filtrarRobotica()">🤖 Robótica</button>
-    </div>
-
-    <div id="loading" class="text-center py-5 no-print" style="display: none;">
-      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-        <span class="visually-hidden">Carregando...</span>
+      <div class="filters-section d-flex flex-wrap gap-2 mb-4 no-print align-items-center">
+        <span class="text-muted small fw-semibold me-2 text-uppercase">Filtros:</span>
+        <button class="btn btn-white border bg-white btn-custom" onclick="mostrarTodos()">👥 Todos</button>
+        <button class="btn btn-white border bg-white btn-custom" onclick="filtrarProfessores()">👨‍🏫 Professores</button>
+        <button class="btn btn-white border bg-white btn-custom" onclick="filtrarRobotica()">🤖 Robótica</button>
       </div>
-      <p class="mt-3 text-muted fw-medium">Sincronizando dados...</p>
-    </div>
 
-    <div class="table-responsive">
-      <table class="table table-hover border-top">
-        <thead>
-          <tr>
-            <th>Funcionário</th>
-            <th class="text-center">2ª Feira</th>
-            <th class="text-center">3ª Feira</th>
-            <th class="text-center">4ª Feira</th>
-            <th class="text-center">5ª Feira</th>
-            <th class="text-center">6ª Feira</th>
-          </tr>
-        </thead>
-        <tbody id="tabelaAlmoco"></tbody>
-      </table>
-    </div>
+      <div id="loading" class="text-center py-5 no-print" style="display: none;">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-3 text-muted fw-medium">Sincronizando dados...</p>
+      </div>
 
-  </div>
+      <div class="table-responsive">
+        <table class="table table-hover border-top">
+          <thead>
+            <tr>
+              <th>Funcionário</th>
+              <th class="text-center">2ª Feira</th>
+              <th class="text-center">3ª Feira</th>
+              <th class="text-center">4ª Feira</th>
+              <th class="text-center">5ª Feira</th>
+              <th class="text-center">6ª Feira</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaAlmoco"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
 
   <script>
     let todosFuncionarios = [];
+
+    function nomeParaOrdenar(func) {
+      return (func['Funcionário'] || '')
+        .replace(/^🤖\s*/u, '')
+        .trim()
+        .toUpperCase();
+    }
+
+    function ordenarPorNome(lista) {
+      return [...lista].sort((a, b) => {
+        return nomeParaOrdenar(a).localeCompare(nomeParaOrdenar(b), 'pt-BR');
+      });
+    }
 
     async function carregarDados() {
       const loading = document.getElementById('loading');
@@ -193,25 +375,31 @@
         }
 
         const dados = await resposta.json();
-        
+
         loading.style.display = 'none';
         containerTabela.style.display = 'block';
 
-        todosFuncionarios = dados.Funcionarios || [];
+        todosFuncionarios = ordenarPorNome(dados.Funcionarios || []);
         renderizarTabela(todosFuncionarios);
 
       } catch (erro) {
         loading.style.display = 'none';
         containerTabela.style.display = 'block';
-        tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">⚠️ Erro ao carregar os dados: ${erro.message}</td></tr>`;
+        tabela.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center text-danger py-4">
+              ⚠️ Erro ao carregar os dados: ${erro.message}
+            </td>
+          </tr>
+        `;
       }
     }
 
-    // Função auxiliar para formatar a célula (Sim ou vazio)
     function formatarCelula(valor) {
       if (valor === 'Sim') {
         return `<span class="badge-sim">Sim</span>`;
       }
+
       return `<span class="badge-vazio">-</span>`;
     }
 
@@ -219,11 +407,21 @@
       const tabela = document.getElementById('tabelaAlmoco');
 
       if (!lista || lista.length === 0) {
-        tabela.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Nenhum dado encontrado</td></tr>';
+        tabela.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+              Nenhum dado encontrado
+            </td>
+          </tr>
+        `;
         return;
       }
 
-      let totalSeg = 0, totalTer = 0, totalQua = 0, totalQui = 0, totalSex = 0;
+      let totalSeg = 0;
+      let totalTer = 0;
+      let totalQua = 0;
+      let totalQui = 0;
+      let totalSex = 0;
 
       const linhas = lista.map(func => {
         const seg = func['2ª Feira'] ?? '';
@@ -241,11 +439,11 @@
         return `
           <tr>
             <td class="fw-medium">${func['Funcionário'] ?? ''}</td>
-            <td class="text-center">${formatarCelula(seg)}</td>
-            <td class="text-center">${formatarCelula(ter)}</td>
-            <td class="text-center">${formatarCelula(qua)}</td>
-            <td class="text-center">${formatarCelula(qui)}</td>
-            <td class="text-center">${formatarCelula(sex)}</td>
+            <td class="text-center" data-label="2ª Feira">${formatarCelula(seg)}</td>
+            <td class="text-center" data-label="3ª Feira">${formatarCelula(ter)}</td>
+            <td class="text-center" data-label="4ª Feira">${formatarCelula(qua)}</td>
+            <td class="text-center" data-label="5ª Feira">${formatarCelula(qui)}</td>
+            <td class="text-center" data-label="6ª Feira">${formatarCelula(sex)}</td>
           </tr>
         `;
       }).join('');
@@ -253,11 +451,11 @@
       const linhaTotal = `
         <tr class="linha-total mt-2">
           <td>🔢 TOTAL DE REFEIÇÕES</td>
-          <td class="text-center">${totalSeg}</td>
-          <td class="text-center">${totalTer}</td>
-          <td class="text-center">${totalQua}</td>
-          <td class="text-center">${totalQui}</td>
-          <td class="text-center">${totalSex}</td>
+          <td class="text-center" data-label="2ª Feira">${totalSeg}</td>
+          <td class="text-center" data-label="3ª Feira">${totalTer}</td>
+          <td class="text-center" data-label="4ª Feira">${totalQua}</td>
+          <td class="text-center" data-label="5ª Feira">${totalQui}</td>
+          <td class="text-center" data-label="6ª Feira">${totalSex}</td>
         </tr>
       `;
 
@@ -269,7 +467,8 @@
         const nome = (func['Funcionário'] ?? '').trim();
         return nome.startsWith('🤖');
       });
-      renderizarTabela(robotica);
+
+      renderizarTabela(ordenarPorNome(robotica));
     }
 
     function filtrarProfessores() {
@@ -277,11 +476,12 @@
         const nome = (func['Funcionário'] ?? '').trim();
         return !nome.startsWith('🤖');
       });
-      renderizarTabela(professores);
+
+      renderizarTabela(ordenarPorNome(professores));
     }
 
     function mostrarTodos() {
-      renderizarTabela(todosFuncionarios);
+      renderizarTabela(ordenarPorNome(todosFuncionarios));
     }
 
     window.onload = carregarDados;
