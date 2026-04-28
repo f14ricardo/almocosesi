@@ -92,7 +92,6 @@
             background-color: #fff;
         }
 
-        /* Animação e estilo global dos botões */
         .btn-custom {
             border-radius: 8px;
             font-weight: 600;
@@ -131,7 +130,6 @@
             cursor: not-allowed;
         }
 
-        /* Divisória para as ações secundárias */
         .divider {
             display: flex;
             align-items: center;
@@ -153,12 +151,12 @@
         .divider:not(:empty)::before { margin-right: .5em; }
         .divider:not(:empty)::after { margin-left: .5em; }
 
-        /* Botões Secundários */
         .btn-visualizar {
             background-color: #f8f9fa;
             color: #2b3440;
             border: 1px solid #dee2e6;
         }
+
         .btn-visualizar:hover {
             background-color: #e9ecef;
             color: #2b3440;
@@ -169,6 +167,7 @@
             color: #dc2626;
             border: 1px solid #fecaca;
         }
+
         .btn-cardapio:hover {
             background-color: #fecaca;
             color: #b91c1c;
@@ -179,6 +178,7 @@
             color: #d97706;
             border: 1px solid #fde68a;
         }
+
         .btn-admin:hover {
             background-color: #fde68a;
             color: #b45309;
@@ -195,6 +195,25 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        .nif-preview {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+            }
+
+            .main-card {
+                padding: 1.5rem;
+                border-radius: 14px;
+            }
         }
     </style>
 </head>
@@ -220,6 +239,7 @@
                     <select class="form-select" id="funcionario" required>
                         <option value="" selected>Carregando lista...</option>
                     </select>
+                    <div id="nifPreview" class="nif-preview d-none"></div>
                 </div>
 
                 <div class="mb-3">
@@ -292,24 +312,46 @@
     </div>
 
     <script>
-        async function obterNomesFuncionarios() {
-            const urlPowerAutomate = 'https://prod-132.westus.logic.azure.com:443/workflows/802e2e86aef44ad09651c07d66f1a15b/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Mn-R6rIQqzFJfNyhvJIONXb-OqiY9an8FBzmP-ebGOk';
+        let listaFuncionarios = [];
 
+        const urlListarFuncionarios = 'https://prod-132.westus.logic.azure.com:443/workflows/802e2e86aef44ad09651c07d66f1a15b/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Mn-R6rIQqzFJfNyhvJIONXb-OqiY9an8FBzmP-ebGOk';
+
+        const urlEnviarMarcacao = 'https://prod-151.westus.logic.azure.com:443/workflows/7ba4d29efe994b658044d5601fdc1fdb/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sMjFcHwh7Ce8wDGVh9MKs5oUUm09EGCq3jCwccFlr8o';
+
+        async function obterNomesFuncionarios() {
             try {
-                const resposta = await fetch(urlPowerAutomate, {
+                const resposta = await fetch(urlListarFuncionarios, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({})
                 });
 
                 const textoResposta = await resposta.text(); 
                 console.log("Resposta do Power Automate:", textoResposta);
 
-                if (!resposta.ok) throw new Error(`Erro HTTP: ${resposta.status}`);
+                if (!resposta.ok) {
+                    throw new Error(`Erro HTTP: ${resposta.status}`);
+                }
 
-                const resultado = typeof textoResposta === 'string' ? JSON.parse(textoResposta) : textoResposta;
-                const funcionarios = Array.isArray(resultado.funcionarios) ? resultado.funcionarios : JSON.parse(resultado.funcionarios);
+                const resultado = JSON.parse(textoResposta);
+
+                let funcionarios = [];
+
+                if (Array.isArray(resultado.funcionarios)) {
+                    funcionarios = resultado.funcionarios;
+                } else if (Array.isArray(resultado.Funcionarios)) {
+                    funcionarios = resultado.Funcionarios;
+                } else if (typeof resultado.funcionarios === "string") {
+                    funcionarios = JSON.parse(resultado.funcionarios);
+                } else if (typeof resultado.Funcionarios === "string") {
+                    funcionarios = JSON.parse(resultado.Funcionarios);
+                } else if (Array.isArray(resultado)) {
+                    funcionarios = resultado;
+                }
+
+                listaFuncionarios = funcionarios;
                 preencherCampoFuncionario(funcionarios);
 
             } catch (erro) {
@@ -319,27 +361,83 @@
             }
         }
 
+        function obterNome(funcionario) {
+            if (typeof funcionario === "string") {
+                return funcionario;
+            }
+
+            return funcionario.nome ||
+                   funcionario.Nome ||
+                   funcionario["Funcionário"] ||
+                   funcionario.Funcionário ||
+                   funcionario.Funcionario ||
+                   "";
+        }
+
+        function obterNif(funcionario) {
+            if (typeof funcionario === "string") {
+                return "";
+            }
+
+            return funcionario.nif ||
+                   funcionario.NIF ||
+                   funcionario.Nif ||
+                   "";
+        }
+
         function preencherCampoFuncionario(funcionarios) {
             const selectFuncionario = document.getElementById("funcionario");
             selectFuncionario.innerHTML = '<option value="" selected>Selecione seu nome</option>';
 
             funcionarios.forEach(funcionario => {
+                const nome = obterNome(funcionario);
+                const nif = obterNif(funcionario);
+
+                if (!nome) return;
+
                 const option = document.createElement("option");
-                option.value = funcionario;
-                option.textContent = funcionario;
+                option.value = nome;
+                option.textContent = nif && nif !== "0" ? `${nome} - NIF: ${nif}` : nome;
+                option.dataset.nif = nif || "";
+                option.dataset.nome = nome;
+
                 selectFuncionario.appendChild(option);
             });
         }
 
-        document.addEventListener("DOMContentLoaded", obterNomesFuncionarios);
+        function atualizarPreviewNif() {
+            const selectFuncionario = document.getElementById("funcionario");
+            const optionSelecionada = selectFuncionario.options[selectFuncionario.selectedIndex];
+            const nif = optionSelecionada ? optionSelecionada.dataset.nif : "";
+            const nifPreview = document.getElementById("nifPreview");
+
+            if (nif && nif !== "0") {
+                nifPreview.textContent = `NIF selecionado: ${nif}`;
+                nifPreview.classList.remove("d-none");
+            } else {
+                nifPreview.textContent = "";
+                nifPreview.classList.add("d-none");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            obterNomesFuncionarios();
+
+            document.getElementById("funcionario").addEventListener("change", atualizarPreviewNif);
+        });
 
         function exibirMensagem(tipo, texto) {
             const mensagem = document.getElementById("alert");
-            mensagem.className = tipo === "success" ? "alert alert-success shadow-sm" : "alert alert-danger shadow-sm";
-            mensagem.innerHTML = tipo === "success" ? `<i class="bi bi-check-circle-fill me-2"></i> ${texto}` : `<i class="bi bi-exclamation-triangle-fill me-2"></i> ${texto}`;
+
+            mensagem.className = tipo === "success"
+                ? "alert alert-success shadow-sm"
+                : "alert alert-danger shadow-sm";
+
+            mensagem.innerHTML = tipo === "success"
+                ? `<i class="bi bi-check-circle-fill me-2"></i> ${texto}`
+                : `<i class="bi bi-exclamation-triangle-fill me-2"></i> ${texto}`;
+
             mensagem.classList.remove("d-none");
-            
-            // Rola a página para o topo do alerta
             mensagem.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
 
@@ -349,18 +447,19 @@
             const btnSubmit = document.getElementById("btnSubmit");
             const textoOriginalBtn = btnSubmit.innerHTML;
 
-            // Altera botão para estado de carregamento
             btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Enviando...';
             
-            // Desabilita todos os elementos do formulário
             const elementosFormulario = document.querySelectorAll("#formulario input, #formulario select, #formulario button");
             elementosFormulario.forEach(elemento => {
                 elemento.disabled = true;
             });
 
-            const url = "https://prod-151.westus.logic.azure.com:443/workflows/7ba4d29efe994b658044d5601fdc1fdb/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sMjFcHwh7Ce8wDGVh9MKs5oUUm09EGCq3jCwccFlr8o";
+            const selectFuncionario = document.getElementById("funcionario");
+            const optionSelecionada = selectFuncionario.options[selectFuncionario.selectedIndex];
+
             const dados = {
-                funcionario: String(document.getElementById("funcionario").value),
+                funcionario: String(optionSelecionada.dataset.nome || selectFuncionario.value),
+                nif: String(optionSelecionada.dataset.nif || ""),
                 segunda: String(document.getElementById("segunda").value),
                 terca: String(document.getElementById("terca").value),
                 quarta: String(document.getElementById("quarta").value),
@@ -368,8 +467,10 @@
                 sexta: String(document.getElementById("sexta").value)
             };
 
+            console.log("Dados enviados:", dados);
+
             try {
-                const resposta = await fetch(url, {
+                const resposta = await fetch(urlEnviarMarcacao, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -382,11 +483,16 @@
                 }
 
                 const resultado = await resposta.json();
+
                 if (resultado.status === "success") {
                     exibirMensagem("success", "Sua marcação foi enviada com sucesso!");
-                    // Opcional: recarregar a página após X segundos ou limpar form
+
+                    document.getElementById("formulario").reset();
+                    document.getElementById("nifPreview").classList.add("d-none");
+
+                    restaurarFormulario(elementosFormulario, btnSubmit, textoOriginalBtn);
                 } else {
-                    exibirMensagem("error", "Erro ao enviar os dados: " + resultado.message);
+                    exibirMensagem("error", "Erro ao enviar os dados: " + (resultado.message || "Resposta inesperada."));
                     restaurarFormulario(elementosFormulario, btnSubmit, textoOriginalBtn);
                 }
 
@@ -401,6 +507,7 @@
             elementos.forEach(elemento => {
                 elemento.disabled = false;
             });
+
             botao.innerHTML = textoOriginal;
         }
     </script>

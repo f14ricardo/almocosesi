@@ -94,7 +94,7 @@
     }
 
     table {
-      min-width: 760px;
+      min-width: 860px;
       margin-bottom: 0 !important;
     }
 
@@ -121,8 +121,20 @@
 
     tbody td:first-child,
     thead th:first-child {
-      min-width: 230px;
+      min-width: 260px;
       word-break: break-word;
+    }
+
+    .nome-principal {
+      font-weight: 600;
+    }
+
+    .nif-text {
+      font-size: 0.78rem;
+      color: #6c757d;
+      margin-top: 3px;
+      display: block;
+      font-weight: 600;
     }
 
     .badge-sim {
@@ -323,7 +335,7 @@
         <table class="table table-hover border-top">
           <thead>
             <tr>
-              <th>Funcionário</th>
+              <th>Funcionário / Aluno</th>
               <th class="text-center">2ª Feira</th>
               <th class="text-center">3ª Feira</th>
               <th class="text-center">4ª Feira</th>
@@ -341,8 +353,20 @@
   <script>
     let todosFuncionarios = [];
 
+    function obterNome(func) {
+      return func.nome || func.Nome || func['Funcionário'] || func.Funcionario || '';
+    }
+
+    function obterNif(func) {
+      return func.nif || func.NIF || func.Nif || '';
+    }
+
+    function obterDia(func, dia) {
+      return func[dia] || '';
+    }
+
     function nomeParaOrdenar(func) {
-      return (func['Funcionário'] || '')
+      return obterNome(func)
         .replace(/^🤖\s*/u, '')
         .trim()
         .toUpperCase();
@@ -376,10 +400,18 @@
 
         const dados = await resposta.json();
 
+        console.log('JSON recebido:', dados);
+
+        const lista = dados.funcionarios || dados.Funcionarios || dados;
+
+        if (!Array.isArray(lista)) {
+          throw new Error('Formato de JSON inválido. Esperado um array ou objeto com funcionarios.');
+        }
+
         loading.style.display = 'none';
         containerTabela.style.display = 'block';
 
-        todosFuncionarios = ordenarPorNome(dados.Funcionarios || []);
+        todosFuncionarios = ordenarPorNome(lista);
         renderizarTabela(todosFuncionarios);
 
       } catch (erro) {
@@ -395,8 +427,12 @@
       }
     }
 
+    function ehMarcado(valor) {
+      return valor === 'Sim' || valor === 'SIM' || valor === 'sim' || valor === 'X' || valor === 'x';
+    }
+
     function formatarCelula(valor) {
-      if (valor === 'Sim') {
+      if (ehMarcado(valor)) {
         return `<span class="badge-sim">Sim</span>`;
       }
 
@@ -424,21 +460,27 @@
       let totalSex = 0;
 
       const linhas = lista.map(func => {
-        const seg = func['2ª Feira'] ?? '';
-        const ter = func['3ª Feira'] ?? '';
-        const qua = func['4ª Feira'] ?? '';
-        const qui = func['5ª Feira'] ?? '';
-        const sex = func['6ª Feira'] ?? '';
+        const nome = obterNome(func);
+        const nif = obterNif(func);
 
-        if (seg === 'Sim') totalSeg++;
-        if (ter === 'Sim') totalTer++;
-        if (qua === 'Sim') totalQua++;
-        if (qui === 'Sim') totalQui++;
-        if (sex === 'Sim') totalSex++;
+        const seg = obterDia(func, '2ª Feira');
+        const ter = obterDia(func, '3ª Feira');
+        const qua = obterDia(func, '4ª Feira');
+        const qui = obterDia(func, '5ª Feira');
+        const sex = obterDia(func, '6ª Feira');
+
+        if (ehMarcado(seg)) totalSeg++;
+        if (ehMarcado(ter)) totalTer++;
+        if (ehMarcado(qua)) totalQua++;
+        if (ehMarcado(qui)) totalQui++;
+        if (ehMarcado(sex)) totalSex++;
 
         return `
           <tr>
-            <td class="fw-medium">${func['Funcionário'] ?? ''}</td>
+            <td>
+              <span class="nome-principal">${nome}</span>
+              <span class="nif-text">NIF: ${nif || '-'}</span>
+            </td>
             <td class="text-center" data-label="2ª Feira">${formatarCelula(seg)}</td>
             <td class="text-center" data-label="3ª Feira">${formatarCelula(ter)}</td>
             <td class="text-center" data-label="4ª Feira">${formatarCelula(qua)}</td>
@@ -464,7 +506,7 @@
 
     function filtrarRobotica() {
       const robotica = todosFuncionarios.filter(func => {
-        const nome = (func['Funcionário'] ?? '').trim();
+        const nome = obterNome(func).trim();
         return nome.startsWith('🤖');
       });
 
@@ -473,7 +515,7 @@
 
     function filtrarProfessores() {
       const professores = todosFuncionarios.filter(func => {
-        const nome = (func['Funcionário'] ?? '').trim();
+        const nome = obterNome(func).trim();
         return !nome.startsWith('🤖');
       });
 
