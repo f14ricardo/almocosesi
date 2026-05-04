@@ -6,16 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marcação de Almoço</title>
 
-    <!-- Ícones -->   
-    <link rel="icon" href="favicon.ico" sizes="any">
+    <!-- PWA / Ícones -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#0056b3">
 
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2e7d32">
-    
-    <!-- Fontes -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -200,29 +196,29 @@
             font-weight: 500;
             padding: 1rem;
         }
-        
+
         .actions-grid {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        .nif-preview {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-top: 6px;
-            font-weight: 600;
-        }
-
         @media (max-width: 576px) {
             body {
-                padding: 10px;
                 align-items: flex-start;
+                padding: 12px;
             }
 
             .main-card {
                 padding: 1.5rem;
-                border-radius: 14px;
+            }
+
+            .logo {
+                max-width: 115px;
+            }
+
+            h1 {
+                font-size: 1.25rem;
             }
         }
     </style>
@@ -231,11 +227,11 @@
 <body>
     <div class="container-custom">
         <div class="main-card">
-            
+
             <img src="https://logodownload.org/wp-content/uploads/2016/10/sesi-logo.png" alt="Logo SESI" class="logo">
 
             <h1>
-                <i class="bi bi-calendar2-check text-primary"></i> 
+                <i class="bi bi-calendar2-check text-primary"></i>
                 Marcação de Almoço
             </h1>
 
@@ -247,9 +243,8 @@
                         <i class="bi bi-person-fill"></i> Funcionário
                     </label>
                     <select class="form-select" id="funcionario" required>
-                        <option value="" selected>Carregando lista...</option>
+                        <option value="" selected>Carregando lista Firebase...</option>
                     </select>
-                    <div id="nifPreview" class="nif-preview d-none"></div>
                 </div>
 
                 <div class="mb-3">
@@ -301,7 +296,7 @@
                     <i class="bi bi-send-fill"></i> Enviar Marcação
                 </button>
             </form>
-            
+
             <div class="divider">Acesso Rápido</div>
 
             <div class="actions-grid">
@@ -321,134 +316,79 @@
         </div>
     </div>
 
-    <script>
-        let listaFuncionarios = [];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        const urlListarFuncionarios = 'https://prod-132.westus.logic.azure.com:443/workflows/802e2e86aef44ad09651c07d66f1a15b/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Mn-R6rIQqzFJfNyhvJIONXb-OqiY9an8FBzmP-ebGOk';
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3311g28nk9FmiOMew4rMZmHJmAigJnrY",
+            authDomain: "sistema-almoco-sesi.firebaseapp.com",
+            projectId: "sistema-almoco-sesi",
+            storageBucket: "sistema-almoco-sesi.firebasestorage.app",
+            messagingSenderId: "705745276706",
+            appId: "1:705745276706:web:9b380862f1915f2ac8df7b"
+        };
 
-        const urlEnviarMarcacao = 'https://prod-151.westus.logic.azure.com:443/workflows/7ba4d29efe994b658044d5601fdc1fdb/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sMjFcHwh7Ce8wDGVh9MKs5oUUm09EGCq3jCwccFlr8o';
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        async function obterNomesFuncionarios() {
+        async function carregarColaboradores() {
+            const selectFuncionario = document.getElementById("funcionario");
+            selectFuncionario.innerHTML = '<option value="" selected>Carregando lista Firebase...</option>';
+
             try {
-                const resposta = await fetch(urlListarFuncionarios, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
+                const q = query(collection(db, "colaboradores"), orderBy("nome"));
+                const snapshot = await getDocs(q);
+
+                selectFuncionario.innerHTML = '<option value="" selected>Selecione seu nome</option>';
+
+                if (snapshot.empty) {
+                    selectFuncionario.innerHTML = '<option value="" selected>Nenhum colaborador cadastrado</option>';
+                    exibirMensagem("error", "Nenhum colaborador encontrado no Firebase. Verifique a coleção colaboradores.");
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const colaborador = doc.data();
+
+                    if (!colaborador.nome) return;
+
+                    const option = document.createElement("option");
+                    option.value = colaborador.nome;
+                    option.textContent = colaborador.nif
+                        ? `${colaborador.nome} - NIF: ${colaborador.nif}`
+                        : colaborador.nome;
+
+                    option.dataset.nif = colaborador.nif || "";
+                    option.dataset.id = doc.id;
+
+                    selectFuncionario.appendChild(option);
                 });
 
-                const textoResposta = await resposta.text(); 
-                console.log("Resposta do Power Automate:", textoResposta);
-
-                if (!resposta.ok) {
-                    throw new Error(`Erro HTTP: ${resposta.status}`);
-                }
-
-                const resultado = JSON.parse(textoResposta);
-
-                let funcionarios = [];
-
-                if (Array.isArray(resultado.funcionarios)) {
-                    funcionarios = resultado.funcionarios;
-                } else if (Array.isArray(resultado.Funcionarios)) {
-                    funcionarios = resultado.Funcionarios;
-                } else if (typeof resultado.funcionarios === "string") {
-                    funcionarios = JSON.parse(resultado.funcionarios);
-                } else if (typeof resultado.Funcionarios === "string") {
-                    funcionarios = JSON.parse(resultado.Funcionarios);
-                } else if (Array.isArray(resultado)) {
-                    funcionarios = resultado;
-                }
-
-                listaFuncionarios = funcionarios;
-                preencherCampoFuncionario(funcionarios);
-
             } catch (erro) {
-                console.error('Erro ao buscar dados:', erro);
-                exibirMensagem("error", "Erro ao carregar a lista de funcionários.");
-                document.getElementById("funcionario").innerHTML = '<option value="">Erro ao carregar</option>';
+                console.error("Erro ao carregar colaboradores do Firebase:", erro);
+                selectFuncionario.innerHTML = '<option value="">Erro ao carregar</option>';
+                exibirMensagem("error", "Erro ao carregar a lista do Firebase. Confira as regras do Firestore e o nome da coleção.");
             }
         }
 
-        function obterNome(funcionario) {
-            if (typeof funcionario === "string") {
-                return funcionario;
-            }
-
-            return funcionario.nome ||
-                   funcionario.Nome ||
-                   funcionario["Funcionário"] ||
-                   funcionario.Funcionário ||
-                   funcionario.Funcionario ||
-                   "";
-        }
-
-        function obterNif(funcionario) {
-            if (typeof funcionario === "string") {
-                return "";
-            }
-
-            return funcionario.nif ||
-                   funcionario.NIF ||
-                   funcionario.Nif ||
-                   "";
-        }
-
-        function preencherCampoFuncionario(funcionarios) {
-            const selectFuncionario = document.getElementById("funcionario");
-            selectFuncionario.innerHTML = '<option value="" selected>Selecione seu nome</option>';
-
-            funcionarios.forEach(funcionario => {
-                const nome = obterNome(funcionario);
-                const nif = obterNif(funcionario);
-
-                if (!nome) return;
-
-                const option = document.createElement("option");
-                option.value = nome;
-                option.textContent = nif && nif !== "0" ? `${nome} - NIF: ${nif}` : nome;
-                option.dataset.nif = nif || "";
-                option.dataset.nome = nome;
-
-                selectFuncionario.appendChild(option);
-            });
-        }
-
-        function atualizarPreviewNif() {
-            const selectFuncionario = document.getElementById("funcionario");
-            const optionSelecionada = selectFuncionario.options[selectFuncionario.selectedIndex];
-            const nif = optionSelecionada ? optionSelecionada.dataset.nif : "";
-            const nifPreview = document.getElementById("nifPreview");
-
-            if (nif && nif !== "0") {
-                nifPreview.textContent = `NIF: ${nif}`;
-                nifPreview.classList.remove("d-none");
-            } else {
-                nifPreview.textContent = "";
-                nifPreview.classList.add("d-none");
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            obterNomesFuncionarios();
-
-            document.getElementById("funcionario").addEventListener("change", atualizarPreviewNif);
-        });
+        document.addEventListener("DOMContentLoaded", carregarColaboradores);
 
         function exibirMensagem(tipo, texto) {
             const mensagem = document.getElementById("alert");
-
-            mensagem.className = tipo === "success"
-                ? "alert alert-success shadow-sm"
-                : "alert alert-danger shadow-sm";
-
+            mensagem.className = tipo === "success" ? "alert alert-success shadow-sm" : "alert alert-danger shadow-sm";
             mensagem.innerHTML = tipo === "success"
                 ? `<i class="bi bi-check-circle-fill me-2"></i> ${texto}`
                 : `<i class="bi bi-exclamation-triangle-fill me-2"></i> ${texto}`;
-
             mensagem.classList.remove("d-none");
             mensagem.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function restaurarFormulario(elementos, botao, textoOriginal) {
+            elementos.forEach(elemento => {
+                elemento.disabled = false;
+            });
+            botao.innerHTML = textoOriginal;
         }
 
         document.getElementById("formulario").addEventListener("submit", async function (event) {
@@ -458,7 +398,7 @@
             const textoOriginalBtn = btnSubmit.innerHTML;
 
             btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Enviando...';
-            
+
             const elementosFormulario = document.querySelectorAll("#formulario input, #formulario select, #formulario button");
             elementosFormulario.forEach(elemento => {
                 elemento.disabled = true;
@@ -467,8 +407,10 @@
             const selectFuncionario = document.getElementById("funcionario");
             const optionSelecionada = selectFuncionario.options[selectFuncionario.selectedIndex];
 
+            const url = "https://prod-151.westus.logic.azure.com:443/workflows/7ba4d29efe994b658044d5601fdc1fdb/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sMjFcHwh7Ce8wDGVh9MKs5oUUm09EGCq3jCwccFlr8o";
+
             const dados = {
-                funcionario: String(optionSelecionada.dataset.nome || selectFuncionario.value),
+                funcionario: String(selectFuncionario.value),
                 nif: String(optionSelecionada.dataset.nif || ""),
                 segunda: String(document.getElementById("segunda").value),
                 terca: String(document.getElementById("terca").value),
@@ -477,10 +419,8 @@
                 sexta: String(document.getElementById("sexta").value)
             };
 
-            console.log("Dados enviados:", dados);
-
             try {
-                const resposta = await fetch(urlEnviarMarcacao, {
+                const resposta = await fetch(url, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -496,10 +436,8 @@
 
                 if (resultado.status === "success") {
                     exibirMensagem("success", "Sua marcação foi enviada com sucesso!");
-
                     document.getElementById("formulario").reset();
-                    document.getElementById("nifPreview").classList.add("d-none");
-
+                    await carregarColaboradores();
                     restaurarFormulario(elementosFormulario, btnSubmit, textoOriginalBtn);
                 } else {
                     exibirMensagem("error", "Erro ao enviar os dados: " + (resultado.message || "Resposta inesperada."));
@@ -512,23 +450,6 @@
                 restaurarFormulario(elementosFormulario, btnSubmit, textoOriginalBtn);
             }
         });
-
-        function restaurarFormulario(elementos, botao, textoOriginal) {
-            elementos.forEach(elemento => {
-                elemento.disabled = false;
-            });
-
-            botao.innerHTML = textoOriginal;
-        }
     </script>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(() => console.log('Service Worker registrado com sucesso'))
-                .catch(error => console.log('Erro ao registrar Service Worker:', error));
-        }
-    </script>
-
 </body>
 </html>
